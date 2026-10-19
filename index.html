@@ -18,6 +18,7 @@
   --park:#F4842C; --park-deep:#C9631A; --leaf:#4BAE52; --leaf2:#3B9743; --trunk:#9B6A3E;
   --salon:#E2408E; --salon-deep:#B92C70; --salon-wall:#FFE3EE;
   --easel:#2E86C9; --easel-deep:#1F62A0; --easel-wall:#E3F1FF; --canvas:#FFF9EE;
+  --arcade:#1FB8B2; --arcade-deep:#15847F; --arcade-wall:#E0F7F5; --sheet:#FFFDF4;
   --font-display:'Baloo 2','Trebuchet MS','Segoe UI',sans-serif;
   --font-body:'Nunito','Segoe UI',Helvetica,Arial,sans-serif;
   --shadow:0 6px 0 rgba(46,33,64,.14);
@@ -29,7 +30,7 @@
     --paper:#2A2540; --ink:#F6F1FF; --muted:#B9AFCF; --line:#4A4264;
     --accent:#A58CFF; --accent-deep:#8A6CF5;
     --window:#FFE38A; --window-glow:1; --cloud:#5A608F; --sun:#F3EFD8; --star:1;
-    --salon-wall:#4A2A3C; --easel-wall:#1F3550; --canvas:#F3E9D6;
+    --salon-wall:#4A2A3C; --easel-wall:#1F3550; --canvas:#F3E9D6; --arcade-wall:#1E4A4A; --sheet:#F3EFE2;
     --shadow:0 6px 0 rgba(0,0,0,.4); color-scheme:dark;
   }
 }
@@ -38,7 +39,7 @@
   --paper:#2A2540; --ink:#F6F1FF; --muted:#B9AFCF; --line:#4A4264;
   --accent:#A58CFF; --accent-deep:#8A6CF5;
   --window:#FFE38A; --window-glow:1; --cloud:#5A608F; --sun:#F3EFD8; --star:1;
-  --salon-wall:#4A2A3C; --easel-wall:#1F3550; --canvas:#F3E9D6;
+  --salon-wall:#4A2A3C; --easel-wall:#1F3550; --canvas:#F3E9D6; --arcade-wall:#1E4A4A; --sheet:#F3EFE2;
   --shadow:0 6px 0 rgba(0,0,0,.4); color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -165,6 +166,34 @@ h1{margin:0;font-family:var(--font-display);font-weight:800;font-size:clamp(40px
       </svg>
       <span class="sign">Art Easel</span>
       <span class="what">Paint and draw your own picture</span>
+      <span class="go">Play</span>
+    </a>
+
+    <a class="shop" href="tictactoe/" style="--c:var(--arcade);--c-deep:var(--arcade-deep)">
+      <svg viewBox="0 0 300 190" aria-hidden="true">
+        <rect x="40" y="56" width="220" height="124" rx="8" fill="var(--arcade-wall)" stroke="var(--arcade)" stroke-width="5"/>
+        <path d="M34 60 L34 40 Q150 10 266 40 L266 60 Z" fill="var(--arcade)"/>
+        <rect x="88" y="24" width="124" height="34" rx="12" fill="var(--paper)" stroke="var(--arcade)" stroke-width="5"/>
+        <text x="150" y="49" text-anchor="middle" font-family="Baloo 2, Trebuchet MS, sans-serif" font-weight="800" font-size="22" fill="var(--arcade-deep)">ARCADE</text>
+        <g fill="#FFD93B"><circle cx="60" cy="68" r="5"/><circle cx="100" cy="68" r="5"/><circle cx="200" cy="68" r="5"/><circle cx="240" cy="68" r="5"/></g>
+        <rect x="58" y="84" width="118" height="74" rx="4" fill="var(--sheet)" transform="rotate(-3 117 121)" stroke="#D9D3C4" stroke-width="2"/>
+        <g stroke="#1A1A1A" stroke-width="4" stroke-linecap="round" fill="none" transform="rotate(-3 117 121)">
+          <path d="M98 92 C97 115 99 135 97 150"/><path d="M136 92 C135 115 137 135 135 150"/>
+          <path d="M66 112 C90 111 130 113 168 111"/><path d="M66 132 C90 131 130 133 168 131"/>
+        </g>
+        <g transform="rotate(-3 117 121)" stroke-linecap="round" fill="none" stroke-width="4">
+          <path d="M74 98 L90 106 M90 98 L74 106" stroke="#E0263C"/>
+          <ellipse cx="117" cy="121" rx="8" ry="7" stroke="#2F6FE4"/>
+          <path d="M144 138 L160 146 M160 138 L144 146" stroke="#E0263C"/>
+        </g>
+        <rect x="192" y="88" width="48" height="90" rx="8" fill="var(--arcade)"/>
+        <rect x="200" y="96" width="32" height="26" rx="4" class="win"/>
+        <circle cx="208" cy="140" r="6" fill="#E0263C"/><circle cx="224" cy="140" r="6" fill="#FFD93B"/>
+        <rect x="206" y="154" width="20" height="8" rx="3" fill="var(--ink)" opacity=".4"/>
+        <ellipse cx="18" cy="182" rx="30" ry="9" fill="var(--leaf)"/><ellipse cx="282" cy="182" rx="30" ry="9" fill="var(--leaf)"/>
+      </svg>
+      <span class="sign">Tic Tac Toe</span>
+      <span class="what">Beat the monster, or play a friend</span>
       <span class="go">Play</span>
     </a>
 
