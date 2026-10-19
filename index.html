@@ -21,6 +21,7 @@
   --font-display:'Baloo 2','Trebuchet MS','Segoe UI',sans-serif;
   --font-body:'Nunito','Segoe UI',Helvetica,Arial,sans-serif;
   --shadow:0 6px 0 rgba(46,33,64,.14);
+  --skyh:330px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -41,22 +42,30 @@
   --shadow:0 6px 0 rgba(0,0,0,.4); color-scheme:dark;
 }
 *{box-sizing:border-box}
-html,body{height:100%}
+html,body{min-height:100%}
 body{margin:0;background:var(--sky2);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.3;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-block:0 0;-webkit-tap-highlight-color:transparent;
-  background:linear-gradient(var(--sky1) 0,var(--sky2) 46%,var(--ground) 46.2%,var(--ground) 100%) fixed}
+  background-color:var(--ground);background-image:linear-gradient(var(--sky1),var(--sky2));background-repeat:no-repeat;background-size:100% var(--skyh)}
 .city{max-width:1060px;margin:0 auto;display:flex;flex-direction:column;min-height:100%}
 .sky{position:relative;text-align:center;padding-block:28px 10px;display:flex;flex-direction:column;align-items:center;gap:6px}
 .sky .deco{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .sky .deco svg{position:absolute}
-@media (max-width:640px){.sky .deco .c2{display:none}}
+@media (max-width:640px){
+  :root{--skyh:390px}
+  .sky{padding-top:86px}
+  .sky .deco .c2{display:none}
+  .sky .deco .sun{width:54px;top:14px;right:8%}
+  .sky .deco .c1{top:24px;width:104px}
+}
 .title{display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap}
 .mascot{width:clamp(74px,12vw,110px);height:auto;flex:none;filter:drop-shadow(0 4px 0 rgba(46,33,64,.18))}
 h1{margin:0;font-family:var(--font-display);font-weight:800;font-size:clamp(40px,8vw,72px);line-height:1;color:var(--accent-deep);letter-spacing:.5px;text-shadow:0 3px 0 var(--paper);text-wrap:balance}
 .tag{margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(18px,2.6vw,24px);color:var(--ink)}
 
-.street{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;align-items:end;padding-block:26px 8px}
+.street{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;align-items:end;padding-block:26px 8px}
+@media (max-width:560px){.street{grid-template-columns:1fr}}
+@media (min-width:1000px){.street{grid-template-columns:repeat(4,1fr)}}
 .shop{display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;color:inherit;background:var(--paper);border:4px solid var(--c);border-radius:22px;padding:14px 14px 18px;
   box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;min-width:0}
 .shop:hover{transform:translateY(-5px);box-shadow:0 11px 0 rgba(46,33,64,.14)}
@@ -84,9 +93,9 @@ h1{margin:0;font-family:var(--font-display);font-weight:800;font-size:clamp(40px
 <div class="city">
   <header class="sky">
     <div class="deco" aria-hidden="true">
-      <svg viewBox="0 0 120 40" style="left:4%;top:18px;width:120px"><ellipse cx="40" cy="26" rx="30" ry="12" fill="var(--cloud)"/><ellipse cx="66" cy="18" rx="26" ry="16" fill="var(--cloud)"/><ellipse cx="88" cy="27" rx="22" ry="11" fill="var(--cloud)"/></svg>
+      <svg class="c1" viewBox="0 0 120 40" style="left:4%;top:18px;width:120px"><ellipse cx="40" cy="26" rx="30" ry="12" fill="var(--cloud)"/><ellipse cx="66" cy="18" rx="26" ry="16" fill="var(--cloud)"/><ellipse cx="88" cy="27" rx="22" ry="11" fill="var(--cloud)"/></svg>
       <svg class="c2" viewBox="0 0 120 40" style="right:1%;top:104px;width:84px"><ellipse cx="40" cy="26" rx="30" ry="12" fill="var(--cloud)"/><ellipse cx="66" cy="18" rx="26" ry="16" fill="var(--cloud)"/><ellipse cx="88" cy="27" rx="22" ry="11" fill="var(--cloud)"/></svg>
-      <svg viewBox="0 0 80 80" style="right:12%;top:6px;width:64px"><circle cx="40" cy="40" r="22" fill="var(--sun)"/></svg>
+      <svg class="sun" viewBox="0 0 80 80" style="right:12%;top:6px;width:64px"><circle cx="40" cy="40" r="22" fill="var(--sun)"/></svg>
       <svg class="stars" viewBox="0 0 400 100" style="left:0;top:0;width:100%" preserveAspectRatio="none"><g fill="#fff"><circle cx="30" cy="30" r="2"/><circle cx="90" cy="12" r="1.5"/><circle cx="160" cy="40" r="2"/><circle cx="230" cy="18" r="1.5"/><circle cx="300" cy="50" r="2"/><circle cx="350" cy="14" r="1.5"/><circle cx="380" cy="70" r="1.5"/><circle cx="120" cy="80" r="1.5"/></g></svg>
     </div>
     <div class="title">
