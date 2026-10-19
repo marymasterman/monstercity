@@ -1,12 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#E2408E">
-<style>[hidden]{display:none!important}img{max-width:100%}</style>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Hand Salon</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;800&display=swap">
 <style>
@@ -41,6 +35,9 @@ button{font:inherit;color:inherit}
 .brand{font-family:var(--font-display);font-weight:800;font-size:clamp(26px,4vw,36px);color:var(--accent-deep);margin:0;line-height:1.1}
 .iconbtn{width:42px;height:42px;border-radius:50%;border:2px solid var(--line);background:var(--paper);display:inline-grid;place-items:center;cursor:pointer;padding:0}
 .iconbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.brandrow{display:flex;align-items:center;gap:10px;min-width:0}
+.home{color:var(--accent-deep);text-decoration:none;flex:none;border-color:var(--accent)}
+.home:hover{background:var(--accent-soft)}
 
 .board{display:grid;gap:16px;grid-template-columns:minmax(0,1fr);align-items:start}
 @media (min-width:900px){.board{grid-template-columns:minmax(0,1fr) 370px}}
@@ -92,11 +89,12 @@ button{font:inherit;color:inherit}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
-</head>
-<body>
 <div class="app">
   <header class="top">
-    <h1 class="brand">Hand Salon</h1>
+    <div class="brandrow">
+      <a class="iconbtn home" href="https://marymasterman.github.io/monstercity/" aria-label="Back to Monster City" title="Back to Monster City"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></a>
+      <h1 class="brand">Hand Salon</h1>
+    </div>
     <button class="iconbtn" id="sound" type="button" aria-label="Turn sound on or off"><span id="soundIcon"></span></button>
   </header>
 
@@ -427,5 +425,5 @@ if(window.claude&&window.claude.hot&&window.claude.hot.ready)window.claude.hot.r
 else start((window.claude&&window.claude.hot&&window.claude.hot.data)||{});
 })();
 </script>
-</body>
-</html>
+
+</body></html>
