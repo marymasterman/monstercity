@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6B4FD8">
+<style>[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Monster City</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;800&display=swap">
+<style>
+/* Layout: a sky with the city name, then a street of shop-front buildings, one per app. Each building is one big tap target. Three across on a tablet, one column on a phone. Night mode lights the windows. */
+:root{
+  --sky1:#9FD9FF; --sky2:#EAF7FF; --ground:#7FCB63; --road:#8C8F96; --road-line:#F5D463;
+  --paper:#FFFFFF; --ink:#2E2140; --muted:#6F6482; --line:#D9D3E6;
+  --accent:#6B4FD8; --accent-deep:#4B35A8;
+  --window:#CFEBFF; --window-glow:0; --cloud:#FFFFFF; --sun:#FFD83A; --star:0;
+  --park:#F4842C; --park-deep:#C9631A; --leaf:#4BAE52; --leaf2:#3B9743; --trunk:#9B6A3E;
+  --salon:#E2408E; --salon-deep:#B92C70; --salon-wall:#FFE3EE;
+  --easel:#2E86C9; --easel-deep:#1F62A0; --easel-wall:#E3F1FF; --canvas:#FFF9EE;
+  --font-display:'Baloo 2','Trebuchet MS','Segoe UI',sans-serif;
+  --font-body:'Nunito','Segoe UI',Helvetica,Arial,sans-serif;
+  --shadow:0 6px 0 rgba(46,33,64,.14);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --sky1:#141A3A; --sky2:#2A2F63; --ground:#2F6B3A; --road:#3A3D48; --road-line:#D9BA4A;
+    --paper:#2A2540; --ink:#F6F1FF; --muted:#B9AFCF; --line:#4A4264;
+    --accent:#A58CFF; --accent-deep:#8A6CF5;
+    --window:#FFE38A; --window-glow:1; --cloud:#5A608F; --sun:#F3EFD8; --star:1;
+    --salon-wall:#4A2A3C; --easel-wall:#1F3550; --canvas:#F3E9D6;
+    --shadow:0 6px 0 rgba(0,0,0,.4); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --sky1:#141A3A; --sky2:#2A2F63; --ground:#2F6B3A; --road:#3A3D48; --road-line:#D9BA4A;
+  --paper:#2A2540; --ink:#F6F1FF; --muted:#B9AFCF; --line:#4A4264;
+  --accent:#A58CFF; --accent-deep:#8A6CF5;
+  --window:#FFE38A; --window-glow:1; --cloud:#5A608F; --sun:#F3EFD8; --star:1;
+  --salon-wall:#4A2A3C; --easel-wall:#1F3550; --canvas:#F3E9D6;
+  --shadow:0 6px 0 rgba(0,0,0,.4); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--sky2);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.3;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 0;-webkit-tap-highlight-color:transparent;
+  background:linear-gradient(var(--sky1) 0,var(--sky2) 46%,var(--ground) 46.2%,var(--ground) 100%) fixed}
+.city{max-width:1060px;margin:0 auto;display:flex;flex-direction:column;min-height:100%}
+.sky{position:relative;text-align:center;padding-block:28px 10px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.sky .deco{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.sky .deco svg{position:absolute}
+@media (max-width:640px){.sky .deco .c2{display:none}}
+.title{display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap}
+.mascot{width:clamp(74px,12vw,110px);height:auto;flex:none;filter:drop-shadow(0 4px 0 rgba(46,33,64,.18))}
+h1{margin:0;font-family:var(--font-display);font-weight:800;font-size:clamp(40px,8vw,72px);line-height:1;color:var(--accent-deep);letter-spacing:.5px;text-shadow:0 3px 0 var(--paper);text-wrap:balance}
+.tag{margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(18px,2.6vw,24px);color:var(--ink)}
+
+.street{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;align-items:end;padding-block:26px 8px}
+.shop{display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none;color:inherit;background:var(--paper);border:4px solid var(--c);border-radius:22px;padding:14px 14px 18px;
+  box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;min-width:0}
+.shop:hover{transform:translateY(-5px);box-shadow:0 11px 0 rgba(46,33,64,.14)}
+.shop:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(46,33,64,.14)}
+.shop svg{width:100%;max-width:300px;height:auto;display:block}
+.sign{font-family:var(--font-display);font-weight:800;font-size:clamp(26px,3vw,32px);line-height:1.05;color:var(--c-deep);text-align:center;text-wrap:balance}
+.what{font-weight:700;color:var(--muted);text-align:center;font-size:16px}
+.go{display:inline-block;background:var(--c);color:#fff;font-family:var(--font-display);font-weight:800;font-size:20px;border-radius:999px;padding:8px 26px;box-shadow:0 4px 0 var(--c-deep);margin-top:2px}
+.lot{border:4px dashed var(--line);background:transparent;box-shadow:none;cursor:default;color:var(--muted)}
+.lot:hover,.lot:active{transform:none;box-shadow:none}
+.lot .sign{color:var(--muted)}
+
+.road{height:46px;background:var(--road);border-radius:12px 12px 0 0;position:relative;overflow:hidden;margin-top:4px;margin-left:-4px;margin-right:-4px}
+.road::before{content:"";position:absolute;left:0;right:0;top:50%;height:5px;transform:translateY(-50%);background:repeating-linear-gradient(90deg,var(--road-line) 0 34px,transparent 34px 60px)}
+.foot{text-align:center;padding-block:14px 26px;font-weight:700;color:var(--ink);font-size:15px}
+.win{fill:var(--window)}
+.glow{opacity:var(--window-glow)}
+.stars{opacity:var(--star)}
+:focus-visible{outline:4px solid var(--accent);outline-offset:3px;border-radius:22px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="city">
+  <header class="sky">
+    <div class="deco" aria-hidden="true">
+      <svg viewBox="0 0 120 40" style="left:4%;top:18px;width:120px"><ellipse cx="40" cy="26" rx="30" ry="12" fill="var(--cloud)"/><ellipse cx="66" cy="18" rx="26" ry="16" fill="var(--cloud)"/><ellipse cx="88" cy="27" rx="22" ry="11" fill="var(--cloud)"/></svg>
+      <svg class="c2" viewBox="0 0 120 40" style="right:1%;top:104px;width:84px"><ellipse cx="40" cy="26" rx="30" ry="12" fill="var(--cloud)"/><ellipse cx="66" cy="18" rx="26" ry="16" fill="var(--cloud)"/><ellipse cx="88" cy="27" rx="22" ry="11" fill="var(--cloud)"/></svg>
+      <svg viewBox="0 0 80 80" style="right:12%;top:6px;width:64px"><circle cx="40" cy="40" r="22" fill="var(--sun)"/></svg>
+      <svg class="stars" viewBox="0 0 400 100" style="left:0;top:0;width:100%" preserveAspectRatio="none"><g fill="#fff"><circle cx="30" cy="30" r="2"/><circle cx="90" cy="12" r="1.5"/><circle cx="160" cy="40" r="2"/><circle cx="230" cy="18" r="1.5"/><circle cx="300" cy="50" r="2"/><circle cx="350" cy="14" r="1.5"/><circle cx="380" cy="70" r="1.5"/><circle cx="120" cy="80" r="1.5"/></g></svg>
+    </div>
+    <div class="title">
+      <svg class="mascot" viewBox="0 0 110 110" aria-hidden="true">
+        <path d="M30 20 L36 44 L20 42 Z" fill="#6B4FD8"/><path d="M80 20 L74 44 L90 42 Z" fill="#6B4FD8"/>
+        <path d="M20 60 C20 32 90 32 90 60 C92 86 80 102 55 102 C30 102 18 86 20 60 Z" fill="#8C6CFF"/>
+        <circle cx="55" cy="56" r="20" fill="#fff"/><circle cx="58" cy="58" r="10" fill="#2E2140"/><circle cx="62" cy="54" r="3.5" fill="#fff"/>
+        <path d="M38 82 Q55 96 72 82" fill="none" stroke="#2E2140" stroke-width="4" stroke-linecap="round"/>
+        <path d="M46 84 L48 90 L52 85 Z M62 85 L64 91 L68 85 Z" fill="#fff"/>
+        <path d="M18 70 Q4 62 10 48" fill="none" stroke="#8C6CFF" stroke-width="9" stroke-linecap="round"/>
+        <path d="M92 70 Q106 64 100 50" fill="none" stroke="#8C6CFF" stroke-width="9" stroke-linecap="round"/>
+      </svg>
+      <h1>Monster City</h1>
+    </div>
+    <p class="tag">Pick a place to play</p>
+  </header>
+
+  <main class="street">
+    <a class="shop" href="countthepark/" style="--c:var(--park);--c-deep:var(--park-deep)">
+      <svg viewBox="0 0 300 190" aria-hidden="true">
+        <rect x="0" y="140" width="300" height="50" rx="10" fill="var(--leaf)"/>
+        <rect x="40" y="60" width="16" height="90" rx="6" fill="var(--park)"/><rect x="244" y="60" width="16" height="90" rx="6" fill="var(--park)"/>
+        <path d="M34 70 Q150 10 266 70 L266 50 Q150 -10 34 50 Z" fill="var(--park)"/>
+        <rect x="96" y="28" width="108" height="34" rx="12" fill="var(--paper)" stroke="var(--park)" stroke-width="5"/>
+        <text x="150" y="53" text-anchor="middle" font-family="Baloo 2, Trebuchet MS, sans-serif" font-weight="800" font-size="24" fill="var(--park-deep)">PARK</text>
+        <rect x="100" y="112" width="12" height="40" rx="4" fill="var(--trunk)"/><circle cx="106" cy="100" r="26" fill="var(--leaf2)"/><circle cx="92" cy="112" r="16" fill="var(--leaf2)"/><circle cx="120" cy="112" r="16" fill="var(--leaf2)"/>
+        <rect x="190" y="118" width="10" height="34" rx="4" fill="var(--trunk)"/><path d="M195 70 L224 128 L166 128 Z" fill="var(--leaf2)"/><path d="M195 88 L218 132 L172 132 Z" fill="var(--leaf)"/>
+        <rect x="140" y="128" width="20" height="24" rx="3" fill="#7E8B98"/><rect x="137" y="124" width="26" height="6" rx="3" fill="#5C6976"/>
+        <ellipse cx="60" cy="168" rx="34" ry="12" fill="var(--easel)"/><path d="M48 168 Q56 160 66 168 Q58 176 48 168 Z" fill="#FF8A3D"/>
+      </svg>
+      <span class="sign">Count the Park</span>
+      <span class="what">How many trees? How many fish?</span>
+      <span class="go">Play</span>
+    </a>
+
+    <a class="shop" href="handsalon/" style="--c:var(--salon);--c-deep:var(--salon-deep)">
+      <svg viewBox="0 0 300 190" aria-hidden="true">
+        <rect x="40" y="60" width="220" height="120" rx="8" fill="var(--salon-wall)" stroke="var(--salon)" stroke-width="5"/>
+        <rect x="30" y="38" width="240" height="26" rx="8" fill="var(--salon)"/>
+        <g fill="var(--salon)"><circle cx="50" cy="64" r="12"/><circle cx="90" cy="64" r="12"/><circle cx="130" cy="64" r="12"/><circle cx="170" cy="64" r="12"/><circle cx="210" cy="64" r="12"/><circle cx="250" cy="64" r="12"/></g>
+        <g fill="#fff"><circle cx="70" cy="64" r="12"/><circle cx="110" cy="64" r="12"/><circle cx="150" cy="64" r="12"/><circle cx="190" cy="64" r="12"/><circle cx="230" cy="64" r="12"/></g>
+        <rect x="90" y="4" width="120" height="30" rx="10" fill="var(--paper)" stroke="var(--salon)" stroke-width="5"/>
+        <text x="150" y="26" text-anchor="middle" font-family="Baloo 2, Trebuchet MS, sans-serif" font-weight="800" font-size="20" fill="var(--salon-deep)">SALON</text>
+        <rect x="56" y="88" width="110" height="68" rx="8" class="win" stroke="var(--salon)" stroke-width="4"/>
+        <rect x="76" y="110" width="22" height="40" rx="6" fill="#FF4FA3"/><rect x="79" y="100" width="16" height="14" rx="3" fill="#2E2140"/>
+        <rect x="112" y="120" width="22" height="30" rx="6" fill="#2F6FE4"/><rect x="115" y="110" width="16" height="14" rx="3" fill="#2E2140"/>
+        <rect x="192" y="100" width="48" height="80" rx="6" fill="var(--salon)"/><circle cx="228" cy="142" r="4" fill="#FFD93B"/>
+        <ellipse cx="18" cy="182" rx="30" ry="9" fill="var(--leaf)"/><ellipse cx="282" cy="182" rx="30" ry="9" fill="var(--leaf)"/>
+      </svg>
+      <span class="sign">Hand Salon</span>
+      <span class="what">Nails, rings, bracelets, tattoos</span>
+      <span class="go">Play</span>
+    </a>
+
+    <a class="shop" href="arteasel/" style="--c:var(--easel);--c-deep:var(--easel-deep)">
+      <svg viewBox="0 0 300 190" aria-hidden="true">
+        <rect x="40" y="56" width="220" height="124" rx="8" fill="var(--easel-wall)" stroke="var(--easel)" stroke-width="5"/>
+        <path d="M30 60 L150 8 L270 60 Z" fill="var(--easel)"/>
+        <g stroke-width="6" stroke-linecap="round" fill="none"><path d="M70 50 L150 16" stroke="#E0263C"/><path d="M90 54 L150 28" stroke="#FFD93B"/><path d="M110 58 L150 40" stroke="#3DC26B"/></g>
+        <rect x="60" y="80" width="180" height="76" rx="8" class="win" stroke="var(--easel)" stroke-width="4"/>
+        <path d="M150 90 L118 156 M150 90 L182 156 M150 110 L150 156" stroke="var(--trunk)" stroke-width="6" stroke-linecap="round" fill="none"/>
+        <rect x="118" y="94" width="64" height="48" rx="4" fill="var(--canvas)" stroke="var(--trunk)" stroke-width="3"/>
+        <circle cx="136" cy="112" r="9" fill="#E0263C"/><circle cx="158" cy="106" r="8" fill="#FFD93B"/><circle cx="162" cy="126" r="9" fill="#2F6FE4"/><circle cx="138" cy="130" r="6" fill="#3DC26B"/>
+        <rect x="200" y="110" width="8" height="48" rx="3" fill="var(--trunk)" transform="rotate(-20 204 134)"/><rect x="196" y="100" width="16" height="18" rx="3" fill="#FF4FA3" transform="rotate(-20 204 134)"/>
+        <rect x="192" y="156" width="48" height="24" rx="4" fill="var(--easel)"/>
+        <ellipse cx="18" cy="182" rx="30" ry="9" fill="var(--leaf)"/><ellipse cx="282" cy="182" rx="30" ry="9" fill="var(--leaf)"/>
+      </svg>
+      <span class="sign">Art Easel</span>
+      <span class="what">Paint and draw your own picture</span>
+      <span class="go">Play</span>
+    </a>
+
+    <div class="shop lot" style="--c:var(--line);--c-deep:var(--muted)">
+      <svg viewBox="0 0 300 190" aria-hidden="true">
+        <rect x="140" y="80" width="10" height="90" rx="3" fill="var(--trunk)"/>
+        <rect x="90" y="56" width="110" height="44" rx="10" fill="var(--paper)" stroke="var(--line)" stroke-width="5"/>
+        <text x="145" y="85" text-anchor="middle" font-family="Baloo 2, Trebuchet MS, sans-serif" font-weight="800" font-size="20" fill="var(--muted)">SOON</text>
+        <g fill="var(--leaf2)"><ellipse cx="60" cy="170" rx="26" ry="10"/><ellipse cx="230" cy="172" rx="30" ry="10"/><ellipse cx="150" cy="178" rx="40" ry="9"/></g>
+        <circle cx="70" cy="150" r="6" fill="#FF4FA3"/><circle cx="240" cy="152" r="6" fill="#FFD93B"/><rect x="68" y="150" width="3" height="20" fill="var(--leaf)"/><rect x="238" y="152" width="3" height="20" fill="var(--leaf)"/>
+      </svg>
+      <span class="sign">Empty lot</span>
+      <span class="what">Your next idea goes here</span>
+    </div>
+  </main>
+
+  <div class="road" aria-hidden="true"></div>
+  <p class="foot">Games dreamed up by a kid and built with Mom.</p>
+</div>
+</body>
+</html>
