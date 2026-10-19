@@ -56,6 +56,9 @@ button{font:inherit;color:inherit}
 .pill .starglyph{color:var(--star);font-size:20px;line-height:1}
 .iconbtn{width:42px;height:42px;border-radius:50%;border:2px solid var(--line);background:var(--paper);display:inline-grid;place-items:center;cursor:pointer;padding:0}
 .iconbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.brandrow{display:flex;align-items:center;gap:10px;min-width:0}
+.home{color:var(--marker-deep);text-decoration:none;flex:none;border-color:var(--marker)}
+.home:hover{background:var(--marker-soft)}
 
 .board{display:grid;gap:16px;grid-template-columns:minmax(0,1fr);align-items:start}
 @media (min-width:880px){.board{grid-template-columns:300px minmax(0,1fr)}.panel{order:-1}}
@@ -126,7 +129,10 @@ button{font:inherit;color:inherit}
 
 <div class="app">
   <header class="top">
-    <h1 class="brand">Count the Park</h1>
+    <div class="brandrow">
+      <a class="iconbtn home" href="https://marymasterman.github.io/monstercity/" aria-label="Back to Monster City" title="Back to Monster City"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></a>
+      <h1 class="brand">Count the Park</h1>
+    </div>
     <div class="status">
       <span class="pill" aria-label="Level">Level <b id="lvl">1</b></span>
       <span class="pill" aria-label="Stars"><span class="starglyph" aria-hidden="true">★</span><b id="stars">0</b></span>
