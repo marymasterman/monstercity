@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#E2408E">
+<style>[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Hand Salon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;800&display=swap">
+<style>
+/* Layout: the hand is the stage; the salon tray (tabs for each item on her list, then options) sits beside it on wide screens and below it on phones and portrait tablets. */
+:root{
+  --bg:#FFF5F9; --paper:#FFFFFF; --table:#F3E8FF; --ink:#3B2143; --muted:#8E6F85; --line:#F0D6E3;
+  --accent:#E2408E; --accent-deep:#B92C70; --accent-soft:#FFDCEB; --water:#5BB8F5; --water-deep:#2E86C9;
+  --font-display:'Baloo 2','Trebuchet MS','Segoe UI',sans-serif;
+  --font-body:'Nunito','Segoe UI',Helvetica,Arial,sans-serif;
+  --radius:18px; --shadow:0 5px 0 rgba(59,33,67,.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#241A2B; --paper:#33263E; --table:#2B2140; --ink:#FBEFF6; --muted:#B99CAE; --line:#4D3B5A;
+    --accent:#FF5FA9; --accent-deep:#E2408E; --accent-soft:#4D2A3F; --water:#5BB8F5; --water-deep:#2E86C9;
+    --shadow:0 5px 0 rgba(0,0,0,.35); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#241A2B; --paper:#33263E; --table:#2B2140; --ink:#FBEFF6; --muted:#B99CAE; --line:#4D3B5A;
+  --accent:#FF5FA9; --accent-deep:#E2408E; --accent-soft:#4D2A3F; --water:#5BB8F5; --water-deep:#2E86C9;
+  --shadow:0 5px 0 rgba(0,0,0,.35); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.3;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:12px 28px;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit}
+.app{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--font-display);font-weight:800;font-size:clamp(26px,4vw,36px);color:var(--accent-deep);margin:0;line-height:1.1}
+.iconbtn{width:42px;height:42px;border-radius:50%;border:2px solid var(--line);background:var(--paper);display:inline-grid;place-items:center;cursor:pointer;padding:0}
+.iconbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+.board{display:grid;gap:16px;grid-template-columns:minmax(0,1fr);align-items:start}
+@media (min-width:900px){.board{grid-template-columns:minmax(0,1fr) 370px}}
+
+.stage{position:relative;background:var(--table);border:4px solid var(--accent);border-radius:22px;box-shadow:var(--shadow);padding:6px;display:grid;place-items:center;min-width:0}
+.stage svg{display:block;width:100%;height:auto;max-width:100%;max-height:min(64vh,760px);touch-action:none;user-select:none;-webkit-user-select:none}
+@media (min-width:900px){.stage svg{max-height:calc(100vh - 150px)}}
+.toast{position:absolute;left:50%;top:12px;transform:translateX(-50%);max-width:calc(100% - 24px);background:var(--paper);color:var(--ink);
+  border:3px solid var(--accent);border-radius:26px;padding:8px 18px;font-family:var(--font-display);font-weight:700;font-size:clamp(16px,2.4vw,20px);
+  text-align:center;box-shadow:var(--shadow);animation:drop .3s cubic-bezier(.3,1.5,.5,1) both;text-wrap:balance;pointer-events:none}
+@keyframes drop{from{transform:translate(-50%,-20px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+
+.panel{display:flex;flex-direction:column;gap:12px;min-width:0}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 6px;border:3px solid var(--line);border-radius:14px;background:var(--paper);
+  font-family:var(--font-display);font-weight:700;font-size:13px;cursor:pointer;box-shadow:var(--shadow);min-width:0;transition:transform .1s}
+.tab svg{width:34px;height:28px;display:block}
+.tab:active{transform:translateY(3px);box-shadow:none}
+.tab.sel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-deep)}
+.hint{font-family:var(--font-display);font-weight:700;font-size:19px;margin:0;text-wrap:balance}
+.opts{display:flex;flex-direction:column;gap:10px}
+.lab{font-weight:800;font-size:12px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted)}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px}
+.chip{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px 6px;background:var(--paper);border:3px solid var(--line);border-radius:14px;
+  cursor:pointer;font-family:var(--font-display);font-weight:700;font-size:14px;box-shadow:var(--shadow);min-width:0;transition:transform .1s}
+.chip svg{width:48px;height:38px;display:block}
+.chip:active{transform:translateY(3px);box-shadow:none}
+.chip.sel{border-color:var(--accent);background:var(--accent-soft)}
+.sws{display:flex;flex-wrap:wrap;gap:9px}
+.sw{width:42px;height:42px;border-radius:50%;border:3px solid var(--paper);box-shadow:0 0 0 2px var(--line);background:var(--c);cursor:pointer;padding:0;position:relative}
+.sw.sel{box-shadow:0 0 0 4px var(--accent)}
+.sw.clear{background:repeating-linear-gradient(45deg,#fff 0 4px,#d9d9d9 4px 8px)}
+.sw.clear::after{content:"";position:absolute;left:8px;right:8px;top:50%;height:3px;background:#E0263C;transform:rotate(-45deg);border-radius:2px}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.pillbtn{height:44px;padding:0 16px;border-radius:999px;border:3px solid var(--line);background:var(--paper);font-family:var(--font-display);font-weight:700;font-size:16px;cursor:pointer;box-shadow:var(--shadow)}
+.pillbtn:active{transform:translateY(3px);box-shadow:none}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.big{height:58px;border-radius:16px;font-family:var(--font-display);font-weight:800;font-size:22px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.big svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.big:active{transform:translateY(3px)}
+.wash{background:var(--water);color:#fff;box-shadow:0 5px 0 var(--water-deep)}
+.undo{background:var(--paper);border:3px solid var(--line);box-shadow:var(--shadow)}
+.undo:disabled{opacity:.45;cursor:default}
+
+.bubble{fill:#fff;fill-opacity:.6;stroke:#9ED8FF;stroke-width:2;animation:rise 1.1s ease-out both}
+@keyframes rise{from{transform:translateY(0);opacity:1}to{transform:translateY(-170px);opacity:0}}
+.tat{cursor:grab}
+:focus-visible{outline:3px solid var(--accent-deep);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <h1 class="brand">Hand Salon</h1>
+    <button class="iconbtn" id="sound" type="button" aria-label="Turn sound on or off"><span id="soundIcon"></span></button>
+  </header>
+
+  <main class="board">
+    <section class="stage" aria-label="The hand">
+      <svg id="hand" viewBox="0 0 520 730" role="img" aria-label="A hand to decorate"></svg>
+      <div class="toast" id="toast" role="status" hidden></div>
+    </section>
+
+    <aside class="panel" aria-label="Salon tray">
+      <div class="tabs" id="tabs" role="tablist"></div>
+      <p class="hint" id="hint"></p>
+      <div class="opts" id="opts"></div>
+      <div class="actions">
+        <button class="big undo" id="undo" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Undo</button>
+        <button class="big wash" id="wash" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-3 4-6 7-6 11a6 6 0 0 0 12 0c0-4-3-7-6-11z"/></svg>Wash</button>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s);
+const svg=$('#hand');
+
+/* ---------- hand geometry (viewBox 520 x 730) ---------- */
+const F={
+  thumb:{bx:176,by:430,L:150,W:58,a:-44},
+  index:{bx:204,by:332,L:190,W:56,a:-6},
+  middle:{bx:264,by:322,L:214,W:58,a:-1},
+  ring:{bx:324,by:328,L:198,W:56,a:4},
+  pinky:{bx:382,by:346,L:150,W:48,a:10}
+};
+const FIDS=['thumb','index','middle','ring','pinky'];
+const PALM='M158 330 C150 420 160 520 198 585 L362 585 C400 520 410 420 402 330 C330 308 230 308 158 330 Z';
+const ARM='M198 585 C196 640 190 700 190 730 L370 730 C370 700 364 640 362 585 Z';
+const SLOTS=[608,640,672,704];
+const CX=280;
+const armHW=y=>82+(y-585)*(8/145);
+
+/* ---------- palettes ---------- */
+const SKINS=['#FFE0C7','#F5CBA7','#E8B894','#D4A078','#C08454','#A0683C','#7A4A28','#55331C','#B6E36D','#7FD0FF','#CBA3FF','#FFB0D8','#FFE066'];
+const POLISH=[null,'#E0263C','#FF4FA3','#FFB6D5','#FF8A3D','#FFD93B','#3DC26B','#8EF0D0','#1FB8B2','#74C0FC','#2F6FE4','#8A4FFF','#CDB4FF','#1F1F1F','#FFFFFF','#E9B949','#C7CDD6'];
+const INKS=['#1F1F1F','#1F3A93','#D7263D','#2E8B57','#7B2CBF','#FF4FA3','#FFFFFF','#E9B949'];
+const BCOLORS=['#E2408E','#FF8A3D','#FFD93B','#3DC26B','#2F6FE4','#8A4FFF','#1F1F1F','#FFFFFF','#E9B949','#C7CDD6'];
+const SHAPES={short:'Short',round:'Round',square:'Square',pointy:'Pointy',coffin:'Coffin'};
+const METAL={gold:['#F0C24F','#B8860B'],silver:['#D5DBE3','#8A94A0']};
+const RINGS={
+  gold:{label:'Gold',metal:'gold',gem:null},
+  silver:{label:'Silver',metal:'silver',gem:null},
+  ruby:{label:'Ruby',metal:'gold',gem:'round',gc:'#E0263C'},
+  sapphire:{label:'Sapphire',metal:'silver',gem:'round',gc:'#2F6FE4'},
+  emerald:{label:'Emerald',metal:'gold',gem:'square',gc:'#2EAD5B'},
+  diamond:{label:'Diamond',metal:'silver',gem:'diamond',gc:'#EAF6FF'},
+  flower:{label:'Flower',metal:'gold',gem:'flower',gc:'#FF4FA3'},
+  heart:{label:'Heart',metal:'silver',gem:'heart',gc:'#FF4FA3'},
+  pearl:{label:'Pearl',metal:'gold',gem:'round',gc:'#FFF7EA'}
+};
+const BRACELETS={beads:'Beads',chain:'Chain',zigzag:'Zigzag',bangle:'Bangle',charm:'Charm',pearls:'Pearls'};
+const SIZES={0.9:'Small',1.3:'Medium',1.8:'Big'};
+
+/* ---------- color helpers ---------- */
+function hexToRgb(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return[(n>>16)&255,(n>>8)&255,n&255];}
+const rgbToHex=(r,g,b)=>'#'+[r,g,b].map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
+function mix(a,b,t){const A=hexToRgb(a),B=hexToRgb(b);return rgbToHex(A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t,A[2]+(B[2]-A[2])*t);}
+const shade=(h,t)=>mix(h,'#000000',t);
+const tint=(h,t)=>mix(h,'#ffffff',t);
+const rand=(a,b)=>a+Math.random()*(b-a);
+const randInt=(a,b)=>Math.floor(rand(a,b+1));
+
+/* ---------- drawing pieces ---------- */
+const HEART='M0 12 C-14 2 -14 -10 -6 -10 C-2 -10 0 -7 0 -5 C0 -7 2 -10 6 -10 C14 -10 14 2 0 12 Z';
+function starPath(n,R,r){let d='';for(let i=0;i<2*n;i++){const rad=i%2?r:R,a=-Math.PI/2+i*Math.PI/n;d+=(i?'L':'M')+(rad*Math.cos(a)).toFixed(1)+' '+(rad*Math.sin(a)).toFixed(1)+' ';}return d+'Z';}
+const petals=(r,pr,cy)=>[0,72,144,216,288].map(a=>'<circle cx="'+(r*Math.cos(a*Math.PI/180)).toFixed(1)+'" cy="'+((cy||0)+r*Math.sin(a*Math.PI/180)).toFixed(1)+'" r="'+pr+'"/>').join('');
+const TATS={
+  heart:c=>'<path d="'+HEART+'" fill="'+c+'"/>',
+  star:c=>'<path d="'+starPath(5,14,6)+'" fill="'+c+'"/>',
+  flower:c=>'<g fill="'+c+'">'+petals(7,6)+'</g><circle r="3.5" fill="#fff"/>',
+  butterfly:c=>'<g fill="'+c+'"><ellipse cx="-9" cy="-5" rx="9" ry="7"/><ellipse cx="9" cy="-5" rx="9" ry="7"/><ellipse cx="-7" cy="6" rx="7" ry="5.5"/><ellipse cx="7" cy="6" rx="7" ry="5.5"/><rect x="-1.5" y="-11" width="3" height="22" rx="1.5"/></g><path d="M-1 -11 L-5 -16 M1 -11 L5 -16" stroke="'+c+'" stroke-width="1.5" fill="none" stroke-linecap="round"/>',
+  moon:c=>'<path d="M5 -13 A13 13 0 1 0 5 13 A9.5 9.5 0 1 1 5 -13 Z" fill="'+c+'"/>',
+  sun:c=>'<circle r="7" fill="'+c+'"/><g stroke="'+c+'" stroke-width="2.5" stroke-linecap="round">'+[0,45,90,135,180,225,270,315].map(a=>'<line x1="0" y1="-10" x2="0" y2="-14" transform="rotate('+a+')"/>').join('')+'</g>',
+  bolt:c=>'<path d="M3 -15 L-8 2 L-1 2 L-3 15 L8 -3 L1 -3 Z" fill="'+c+'"/>',
+  smile:c=>'<circle r="12" fill="none" stroke="'+c+'" stroke-width="2.5"/><circle cx="-4.5" cy="-3" r="1.8" fill="'+c+'"/><circle cx="4.5" cy="-3" r="1.8" fill="'+c+'"/><path d="M-6 3 Q0 9 6 3" fill="none" stroke="'+c+'" stroke-width="2.2" stroke-linecap="round"/>',
+  rainbow:()=>'<g fill="none" stroke-width="3.2" stroke-linecap="round"><path d="M-13 8 A13 13 0 0 1 13 8" stroke="#E0263C"/><path d="M-9.5 8 A9.5 9.5 0 0 1 9.5 8" stroke="#FFD93B"/><path d="M-6 8 A6 6 0 0 1 6 8" stroke="#2F6FE4"/></g>',
+  paw:c=>'<g fill="'+c+'"><ellipse cx="0" cy="5" rx="8" ry="6.5"/><circle cx="-8" cy="-4" r="3.2"/><circle cx="-3" cy="-9" r="3.2"/><circle cx="3" cy="-9" r="3.2"/><circle cx="8" cy="-4" r="3.2"/></g>',
+  diamond:c=>'<path d="M-6 -12 L6 -12 L11 -4 L0 13 L-11 -4 Z" fill="'+c+'"/><path d="M-11 -4 L11 -4 M-6 -12 L-4 -4 L0 13 M6 -12 L4 -4" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.2"/>'
+};
+const TATLABEL={heart:'Heart',star:'Star',flower:'Flower',butterfly:'Butterfly',moon:'Moon',sun:'Sun',bolt:'Lightning',smile:'Smiley',rainbow:'Rainbow',paw:'Paw',diamond:'Diamond'};
+
+function nailGeom(shape,W,L){
+  const hw=(W-12)/2,base=-L+30,ext={short:0,round:22,square:22,pointy:30,coffin:24}[shape]||0,top=-L+6-ext;
+  const bot='Q0 '+(base+6)+' '+(-hw)+' '+base+' Z';
+  let d;
+  if(shape==='square')d='M'+(-hw)+' '+base+' L'+(-hw)+' '+(top+5)+' Q'+(-hw)+' '+top+' '+(-hw+5)+' '+top+' L'+(hw-5)+' '+top+' Q'+hw+' '+top+' '+hw+' '+(top+5)+' L'+hw+' '+base+' '+bot;
+  else if(shape==='pointy')d='M'+(-hw)+' '+base+' C'+(-hw)+' '+(top+34)+' -5 '+(top+8)+' 0 '+top+' C5 '+(top+8)+' '+hw+' '+(top+34)+' '+hw+' '+base+' '+bot;
+  else if(shape==='coffin')d='M'+(-hw)+' '+base+' L'+(-hw)+' '+(base-22)+' L'+(-hw*0.42).toFixed(1)+' '+top+' L'+(hw*0.42).toFixed(1)+' '+top+' L'+hw+' '+(base-22)+' L'+hw+' '+base+' '+bot;
+  else d='M'+(-hw)+' '+base+' L'+(-hw)+' '+(top+hw)+' A'+hw+' '+hw+' 0 0 1 '+hw+' '+(top+hw)+' L'+hw+' '+base+' '+bot;
+  return{d,top,hw,base};
+}
+function ringSvg(style,W,yr){
+  const r=RINGS[style],m=METAL[r.metal][0],ms=METAL[r.metal][1],gy=yr-9;
+  let s='<rect x="'+(-W/2-3)+'" y="'+(yr-7)+'" width="'+(W+6)+'" height="14" rx="6" fill="'+m+'" stroke="'+ms+'" stroke-width="1.5"/><rect x="'+(-W/2+5)+'" y="'+(yr-4)+'" width="'+(W*0.3).toFixed(1)+'" height="3.5" rx="1.7" fill="#fff" opacity=".55"/>';
+  if(r.gem==='round')s+='<circle cy="'+gy+'" r="9" fill="'+r.gc+'" stroke="'+ms+'" stroke-width="1.5"/><circle cx="-3" cy="'+(gy-3)+'" r="2.5" fill="#fff" opacity=".7"/>';
+  else if(r.gem==='square')s+='<rect x="-8" y="'+(gy-8)+'" width="16" height="16" rx="3" fill="'+r.gc+'" stroke="'+ms+'" stroke-width="1.5"/><rect x="-5" y="'+(gy-5)+'" width="4" height="4" rx="1" fill="#fff" opacity=".6"/>';
+  else if(r.gem==='diamond')s+='<path d="M-6 '+(gy-9)+' L6 '+(gy-9)+' L11 '+(gy-3)+' L0 '+(gy+10)+' L-11 '+(gy-3)+' Z" fill="'+r.gc+'" stroke="'+ms+'" stroke-width="1.5"/><path d="M-11 '+(gy-3)+' L11 '+(gy-3)+' M-6 '+(gy-9)+' L-4 '+(gy-3)+' L0 '+(gy+10)+' M6 '+(gy-9)+' L4 '+(gy-3)+'" fill="none" stroke="'+ms+'" stroke-width="1" opacity=".6"/>';
+  else if(r.gem==='flower')s+='<g fill="'+r.gc+'">'+petals(6,4.5,gy)+'</g><circle cy="'+gy+'" r="3" fill="#FFD93B"/>';
+  else if(r.gem==='heart')s+='<path transform="translate(0 '+gy+') scale(.85)" d="'+HEART+'" fill="'+r.gc+'" stroke="'+ms+'" stroke-width="1.5"/>';
+  return s;
+}
+function braceletSvg(b,xl,xr,y){
+  const hw=(xr-xl)/2,cx=(xl+xr)/2,c=b.color,dark=shade(c,.3),light=tint(c,.45);
+  const arcY=t=>y+10*Math.sin(Math.PI*t);
+  const ribbon=(h,fill,stroke)=>'<path d="M'+xl+' '+(y-h)+' Q'+cx+' '+(y-h+20)+' '+xr+' '+(y-h)+' L'+xr+' '+(y+h)+' Q'+cx+' '+(y+h+20)+' '+xl+' '+(y+h)+' Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="1.5"/>';
+  let s='';
+  if(b.style==='beads'){const n=Math.max(5,Math.round(2*hw/18));for(let k=0;k<n;k++){const t=k/(n-1),x=xl+9+t*(2*hw-18);s+='<circle cx="'+x.toFixed(1)+'" cy="'+arcY(t).toFixed(1)+'" r="9" fill="'+(k%2?light:c)+'" stroke="'+dark+'" stroke-width="1.5"/>';}}
+  else if(b.style==='chain'){const n=Math.max(5,Math.round(2*hw/17));for(let k=0;k<n;k++){const t=k/(n-1),x=xl+10+t*(2*hw-20);s+='<circle cx="'+x.toFixed(1)+'" cy="'+arcY(t).toFixed(1)+'" r="9" fill="none" stroke="'+c+'" stroke-width="4"/>';}}
+  else if(b.style==='zigzag'){s+=ribbon(10,light,dark);let d='';for(let k=0;k<=16;k++){const t=k/16,x=xl+t*2*hw;d+=(k?'L':'M')+x.toFixed(1)+' '+(arcY(t)+(k%2?6:-6)).toFixed(1)+' ';}s+='<path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="3.5" stroke-linejoin="round"/>';}
+  else if(b.style==='bangle'){s+=ribbon(9,c,dark)+'<path d="M'+(xl+8)+' '+(y-4)+' Q'+cx+' '+(y+16)+' '+(xr-8)+' '+(y-4)+'" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2.5"/>';}
+  else if(b.style==='charm'){s+='<path d="M'+xl+' '+y+' Q'+cx+' '+(y+20)+' '+xr+' '+y+'" fill="none" stroke="'+c+'" stroke-width="3"/>';const n=Math.max(5,Math.round(2*hw/16));for(let k=0;k<n;k++){const t=k/(n-1);s+='<circle cx="'+(xl+t*2*hw).toFixed(1)+'" cy="'+arcY(t).toFixed(1)+'" r="2.6" fill="'+c+'"/>';}s+='<line x1="'+cx+'" y1="'+(y+10)+'" x2="'+cx+'" y2="'+(y+16)+'" stroke="'+c+'" stroke-width="2"/><path transform="translate('+cx+' '+(y+24)+') scale(.75)" d="'+HEART+'" fill="'+c+'" stroke="'+dark+'" stroke-width="1.5"/>';}
+  else if(b.style==='pearls'){const n=Math.max(6,Math.round(2*hw/14));for(let k=0;k<n;k++){const t=k/(n-1),x=xl+7+t*(2*hw-14);s+='<circle cx="'+x.toFixed(1)+'" cy="'+arcY(t).toFixed(1)+'" r="6.5" fill="'+tint(c,.75)+'" stroke="'+shade(c,.2)+'" stroke-width="1.2"/><circle cx="'+(x-2).toFixed(1)+'" cy="'+(arcY(t)-2).toFixed(1)+'" r="1.8" fill="#fff" opacity=".8"/>';}}
+  return s;
+}
+const ERASER='<svg viewBox="0 0 40 32" aria-hidden="true"><rect x="5" y="9" width="30" height="15" rx="5" fill="#FFB0D8"/><rect x="5" y="9" width="12" height="15" rx="5" fill="#8FD3FF"/></svg>';
+const ICON_SOUND='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a4 4 0 0 1 0 7"/><path d="M18.5 5.5a8 8 0 0 1 0 13"/></svg>';
+const ICON_MUTE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6"/></svg>';
+
+/* ---------- state ---------- */
+const state={tab:'skin',skin:'#F5CBA7',nailShape:'short',nails:{thumb:null,index:null,middle:null,ring:null,pinky:null},glitter:false,nailColor:'#FF4FA3',
+  ringStyle:'ruby',rings:{thumb:null,index:null,middle:null,ring:null,pinky:null},bracelets:[],braceletColor:'#E2408E',
+  tattooShape:'heart',tattooColor:'#1F1F1F',tattooSize:1.3,tattoos:[],nextId:1,muted:false};
+const SAVED=['skin','nailShape','nails','glitter','rings','bracelets','tattoos','nextId','muted','nailColor','ringStyle','braceletColor','tattooShape','tattooColor','tattooSize'];
+const UNDOABLE=['skin','nailShape','nails','glitter','rings','bracelets','tattoos'];
+const pickKeys=keys=>{const o={};keys.forEach(k=>o[k]=state[k]);return o;};
+function save(){try{localStorage.setItem('hand-salon',JSON.stringify(pickKeys(SAVED)));}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem('hand-salon')||'null');if(d&&d.skin)Object.assign(state,d);}catch(e){}}
+const history=[];
+const snapshot=()=>JSON.stringify(pickKeys(UNDOABLE));
+function push(snap){history.push(snap||snapshot());if(history.length>60)history.shift();updateButtons();}
+function undo(){if(!history.length){toast('Nothing to undo');return;}Object.assign(state,JSON.parse(history.pop()));render();renderOpts();save();sfx.tick();updateButtons();}
+function updateButtons(){$('#undo').disabled=!history.length;}
+
+/* ---------- sound ---------- */
+let actx=null;
+function tone(f,d,type,g,to){
+  if(state.muted)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended')actx.resume();
+    const t=actx.currentTime,o=actx.createOscillator(),v=actx.createGain();
+    o.type=type||'sine';o.frequency.setValueAtTime(f,t);
+    if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);
+    v.gain.setValueAtTime(g||.15,t);v.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(v);v.connect(actx.destination);o.start(t);o.stop(t+d+.02);
+  }catch(e){}
+}
+const sfx={
+  tick:()=>tone(900,.05,'triangle',.06),
+  pop:()=>tone(500,.12,'sine',.15,900),
+  stamp:()=>tone(320,.1,'square',.05,200),
+  bubbles:()=>{for(let i=0;i<7;i++)setTimeout(()=>tone(600+Math.random()*700,.09,'sine',.08,1500),i*110);}
+};
+
+/* ---------- hand rendering ---------- */
+function capsule(id,attrs){const f=F[id];return '<rect x="'+(-f.W/2)+'" y="'+(-f.L)+'" width="'+f.W+'" height="'+(f.L+40)+'" rx="'+(f.W/2)+'" transform="translate('+f.bx+' '+f.by+') rotate('+f.a+')" '+attrs+'/>';}
+function fingerG(id,inner){const f=F[id];return '<g transform="translate('+f.bx+' '+f.by+') rotate('+f.a+')">'+inner+'</g>';}
+const tatTransform=t=>'translate('+t.x.toFixed(1)+' '+t.y.toFixed(1)+') rotate('+t.rot+') scale('+t.size+')';
+function render(){
+  const sk=state.skin,line=shade(sk,.3),nat=mix(sk,'#FFE1EA',.45);
+  const sil=attrs=>'<path d="'+ARM+'" '+attrs+'/><path d="'+PALM+'" '+attrs+'/>'+FIDS.map(id=>capsule(id,attrs)).join('');
+  let out='<defs><clipPath id="skinclip">'+sil('')+'</clipPath><pattern id="glit" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1.1" fill="#fff" opacity=".9"/><circle cx="4.5" cy="4.5" r=".8" fill="#fff" opacity=".7"/></pattern></defs>';
+  out+='<g>'+sil('fill="'+sk+'" stroke="'+line+'" stroke-width="7" stroke-linejoin="round"')+'</g>';
+  out+='<path d="'+ARM+'" fill="'+sk+'" data-skin="1"/><path d="'+PALM+'" fill="'+sk+'" data-skin="1"/>'+FIDS.map(id=>capsule(id,'fill="'+sk+'" data-skin="1" data-finger="'+id+'"')).join('');
+  out+='<g fill="none" stroke="'+line+'" stroke-width="2" stroke-linecap="round" opacity=".5" pointer-events="none">'+FIDS.map(id=>{const f=F[id];const cr=y=>'<path d="M'+(-f.W/2+9)+' '+y.toFixed(0)+' Q0 '+(y+5).toFixed(0)+' '+(f.W/2-9)+' '+y.toFixed(0)+'"/>';return fingerG(id,cr(-f.L*0.5)+(id==='thumb'?'':cr(-f.L*0.18)));}).join('')+'</g>';
+  out+='<g clip-path="url(#skinclip)" opacity=".9">'+state.tattoos.map(t=>'<g class="tat" data-tattoo="'+t.id+'" transform="'+tatTransform(t)+'"><circle r="19" fill="transparent"/>'+TATS[t.shape](t.color)+'</g>').join('')+'</g>';
+  out+=FIDS.map(id=>{
+    const f=F[id],col=state.nails[id],g=nailGeom(state.nailShape,f.W,f.L),fill=col||nat;
+    let s='<path d="'+g.d+'" fill="'+fill+'" stroke="'+(col?shade(col,.25):line)+'" stroke-width="1.5" data-finger="'+id+'"/>';
+    if(col&&state.glitter)s+='<path d="'+g.d+'" fill="url(#glit)" data-finger="'+id+'"/>';
+    s+='<ellipse cx="'+(-g.hw*0.45).toFixed(1)+'" cy="'+(g.top+g.hw*0.9).toFixed(1)+'" rx="3.5" ry="'+Math.min(10,(g.base-g.top)*0.3).toFixed(1)+'" fill="#fff" opacity=".45" data-finger="'+id+'"/>';
+    return fingerG(id,s);
+  }).join('');
+  out+=FIDS.map(id=>{const r=state.rings[id];if(!r)return'';const f=F[id];return fingerG(id,'<g data-finger="'+id+'">'+ringSvg(r,f.W,-f.L*0.28)+'</g>');}).join('');
+  out+=state.bracelets.map((b,i)=>{const y=SLOTS[i],hw=armHW(y)+4;return '<g data-bracelet="'+i+'"><path d="M'+(CX-hw)+' '+(y-14)+' Q'+CX+' '+(y+6)+' '+(CX+hw)+' '+(y-14)+' L'+(CX+hw)+' '+(y+14)+' Q'+CX+' '+(y+34)+' '+(CX-hw)+' '+(y+14)+' Z" fill="transparent"/>'+braceletSvg(b,CX-hw,CX+hw,y)+'</g>';}).join('');
+  out+='<g id="bubbles" pointer-events="none"></g>';
+  svg.innerHTML=out;
+}
+
+/* ---------- tray rendering ---------- */
+const TABS=[
+  {id:'skin',label:'Skin',icon:'<svg viewBox="0 0 40 32" aria-hidden="true"><circle cx="11" cy="16" r="9" fill="#F5CBA7"/><circle cx="21" cy="16" r="9" fill="#C08454"/><circle cx="31" cy="16" r="8" fill="#7A4A28"/></svg>'},
+  {id:'nails',label:'Nails',icon:'<svg viewBox="-30 -100 60 84" aria-hidden="true"><rect x="-24" y="-60" width="48" height="70" rx="24" fill="#F5CBA7"/><path d="'+nailGeom('pointy',48,60).d+'" fill="#FF4FA3" stroke="#B8306F" stroke-width="2"/></svg>'},
+  {id:'rings',label:'Rings',icon:'<svg viewBox="-22 -28 44 38" aria-hidden="true">'+ringSvg('ruby',28,0)+'</svg>'},
+  {id:'bracelets',label:'Bracelets',icon:'<svg viewBox="-100 -24 200 60" aria-hidden="true">'+braceletSvg({style:'beads',color:'#E2408E'},-90,90,0)+'</svg>'},
+  {id:'tattoo',label:'Tattoos',icon:'<svg viewBox="-18 -18 36 36" aria-hidden="true">'+TATS.star('currentColor')+'</svg>'}
+];
+const HINTS={skin:'Pick a skin color',nails:'Pick a color, then tap a finger',rings:'Pick a ring, then tap a finger',bracelets:'Tap a bracelet to put it on. Tap it on the arm to take it off.',tattoo:'Pick a tattoo, then tap the hand. Drag to move it.'};
+const sw=(k,v,sel,label)=>'<button type="button" class="sw'+(sel?' sel':'')+(v?'':' clear')+'" style="--c:'+(v||'#fff')+'" data-k="'+k+'" data-v="'+(v||'')+'" aria-label="'+(label||v||'None')+'"'+(sel?' aria-pressed="true"':'')+'></button>';
+const chip=(k,v,sel,label,icon)=>'<button type="button" class="chip'+(sel?' sel':'')+'" data-k="'+k+'" data-v="'+v+'"'+(sel?' aria-pressed="true"':'')+'>'+icon+'<span>'+label+'</span></button>';
+function renderTabs(){
+  $('#tabs').innerHTML=TABS.map(t=>'<button type="button" role="tab" class="tab'+(state.tab===t.id?' sel':'')+'" data-tab="'+t.id+'" aria-selected="'+(state.tab===t.id)+'">'+t.icon+'<span>'+t.label+'</span></button>').join('');
+  $('#hint').textContent=HINTS[state.tab];
+}
+function renderOpts(){
+  let h='';
+  if(state.tab==='skin'){
+    h+='<div class="lab">Skin color</div><div class="sws">'+SKINS.map(c=>sw('skin',c,c===state.skin)).join('')+'</div>';
+  }else if(state.tab==='nails'){
+    h+='<div class="lab">Nail shape</div><div class="chips">'+Object.keys(SHAPES).map(s=>chip('nshape',s,state.nailShape===s,SHAPES[s],'<svg viewBox="-30 -100 60 84" aria-hidden="true"><rect x="-24" y="-60" width="48" height="70" rx="24" fill="'+state.skin+'"/><path d="'+nailGeom(s,48,60).d+'" fill="'+(state.nailColor||mix(state.skin,'#FFE1EA',.45))+'" stroke="'+shade(state.nailColor||state.skin,.25)+'" stroke-width="2"/></svg>')).join('')+'</div>';
+    h+='<div class="lab">Polish</div><div class="sws">'+POLISH.map(c=>sw('ncolor',c,(state.nailColor||'')===(c||''),c?c:'No polish')).join('')+'</div>';
+    h+='<div class="row">'+chip('glitter','1',state.glitter,'Glitter','<svg viewBox="-18 -18 36 36" aria-hidden="true"><path d="'+starPath(4,13,4)+'" fill="#FFD93B"/><path transform="translate(9 -9) scale(.45)" d="'+starPath(4,13,4)+'" fill="#FFD93B"/><path transform="translate(-10 9) scale(.35)" d="'+starPath(4,13,4)+'" fill="#FFD93B"/></svg>')+'<button type="button" class="pillbtn" data-k="paintall" data-v="1">Paint all</button><button type="button" class="pillbtn" data-k="rainbow" data-v="1">Rainbow!</button></div>';
+  }else if(state.tab==='rings'){
+    h+='<div class="lab">Rings</div><div class="chips">'+Object.keys(RINGS).map(r=>chip('rstyle',r,state.ringStyle===r,RINGS[r].label,'<svg viewBox="-22 -28 44 38" aria-hidden="true">'+ringSvg(r,28,0)+'</svg>')).join('')+chip('rstyle','off',state.ringStyle==='off','Take off',ERASER)+'</div>';
+  }else if(state.tab==='bracelets'){
+    h+='<div class="lab">Color</div><div class="sws">'+BCOLORS.map(c=>sw('bcolor',c,state.braceletColor===c)).join('')+'</div>';
+    h+='<div class="lab">Bracelets</div><div class="chips">'+Object.keys(BRACELETS).map(b=>chip('bstyle',b,false,BRACELETS[b],'<svg viewBox="-100 -24 200 60" aria-hidden="true">'+braceletSvg({style:b,color:state.braceletColor},-90,90,0)+'</svg>')).join('')+'</div>';
+  }else if(state.tab==='tattoo'){
+    h+='<div class="lab">Tattoos</div><div class="chips">'+Object.keys(TATS).map(t=>chip('tshape',t,state.tattooShape===t,TATLABEL[t],'<svg viewBox="-18 -18 36 36" aria-hidden="true">'+TATS[t](state.tattooColor)+'</svg>')).join('')+chip('tshape','erase',state.tattooShape==='erase','Erase',ERASER)+'</div>';
+    h+='<div class="lab">Ink</div><div class="sws">'+INKS.map(c=>sw('tcolor',c,state.tattooColor===c)).join('')+'</div>';
+    h+='<div class="lab">Size</div><div class="chips">'+Object.keys(SIZES).map(s=>chip('tsize',s,String(state.tattooSize)===s,SIZES[s],'<svg viewBox="-18 -18 36 36" aria-hidden="true"><g transform="scale('+(+s*0.6).toFixed(2)+')">'+TATS.star('currentColor')+'</g></svg>')).join('')+'</div>';
+  }
+  $('#opts').innerHTML=h;
+  $('#soundIcon').innerHTML=state.muted?ICON_MUTE:ICON_SOUND;
+}
+let toastTimer=null;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;t.style.animation='none';void t.offsetWidth;t.style.animation='';clearTimeout(toastTimer);toastTimer=setTimeout(()=>{t.hidden=true;},1900);}
+
+/* ---------- actions ---------- */
+function act(k,v){
+  switch(k){
+    case 'skin':push();state.skin=v;break;
+    case 'nshape':push();state.nailShape=v;break;
+    case 'ncolor':state.nailColor=v||null;break;
+    case 'glitter':push();state.glitter=!state.glitter;break;
+    case 'paintall':push();FIDS.forEach(f=>state.nails[f]=state.nailColor);break;
+    case 'rainbow':{push();const RB=['#E0263C','#FF8A3D','#FFD93B','#3DC26B','#2F6FE4'];FIDS.forEach((f,i)=>state.nails[f]=RB[i]);break;}
+    case 'rstyle':state.ringStyle=v;break;
+    case 'bstyle':if(state.bracelets.length>=SLOTS.length){toast('The arm is full! Tap one to take it off.');return;}push();state.bracelets.push({style:v,color:state.braceletColor});sfx.pop();break;
+    case 'bcolor':state.braceletColor=v;break;
+    case 'tshape':state.tattooShape=v;break;
+    case 'tcolor':state.tattooColor=v;break;
+    case 'tsize':state.tattooSize=+v;break;
+    default:return;
+  }
+  sfx.tick();render();renderOpts();save();
+}
+function pt(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const m=svg.getScreenCTM();return m?p.matrixTransform(m.inverse()):{x:0,y:0};}
+let drag=null,washing=false;
+svg.addEventListener('pointerdown',e=>{
+  if(washing)return;
+  const tat=e.target.closest('[data-tattoo]'),fin=e.target.closest('[data-finger]'),br=e.target.closest('[data-bracelet]'),skin=e.target.closest('[data-skin]');
+  if(state.tab==='tattoo'){
+    if(tat){
+      const id=+tat.dataset.tattoo,t=state.tattoos.find(x=>x.id===id);if(!t)return;
+      if(state.tattooShape==='erase'){push();state.tattoos=state.tattoos.filter(x=>x.id!==id);render();save();sfx.pop();return;}
+      const p=pt(e);drag={el:tat,t,dx:t.x-p.x,dy:t.y-p.y,moved:false,snap:snapshot()};
+      try{svg.setPointerCapture(e.pointerId);}catch(err){}
+      e.preventDefault();return;
+    }
+    if(skin||fin||br){
+      if(state.tattooShape==='erase'){toast('Tap a tattoo to erase it');return;}
+      const p=pt(e);push();
+      state.tattoos.push({id:state.nextId++,shape:state.tattooShape,color:state.tattooColor,size:state.tattooSize,x:p.x,y:p.y,rot:randInt(-15,15)});
+      render();save();sfx.stamp();
+    }
+    return;
+  }
+  if(state.tab==='nails'){
+    if(fin){push();state.nails[fin.dataset.finger]=state.nailColor;render();save();sfx.pop();}
+    else if(skin)toast('Tap a finger to paint its nail');
+    return;
+  }
+  if(state.tab==='rings'){
+    if(fin){
+      const id=fin.dataset.finger;
+      if(state.ringStyle==='off'){if(state.rings[id]){push();state.rings[id]=null;render();save();sfx.pop();}}
+      else{push();state.rings[id]=state.ringStyle;render();save();sfx.pop();}
+    }else if(skin)toast('Tap a finger to put the ring on');
+    return;
+  }
+  if(state.tab==='bracelets'){
+    if(br){push();state.bracelets.splice(+br.dataset.bracelet,1);render();save();sfx.pop();}
+    else if(skin||fin)toast('Tap a bracelet in the tray to put it on');
+    return;
+  }
+  if(state.tab==='skin'&&(skin||fin))toast('Pick a color in the tray');
+});
+svg.addEventListener('pointermove',e=>{
+  if(!drag)return;
+  const p=pt(e);
+  if(!drag.moved){drag.moved=true;push(drag.snap);}
+  drag.t.x=p.x+drag.dx;drag.t.y=p.y+drag.dy;
+  drag.el.setAttribute('transform',tatTransform(drag.t));
+});
+const endDrag=()=>{if(!drag)return;if(drag.moved)save();drag=null;};
+svg.addEventListener('pointerup',endDrag);
+svg.addEventListener('pointercancel',endDrag);
+
+function wash(){
+  if(washing)return;
+  const nothing=!state.bracelets.length&&!state.tattoos.length&&FIDS.every(f=>!state.nails[f]&&!state.rings[f]);
+  washing=true;push();sfx.bubbles();
+  let s='';for(let i=0;i<24;i++){s+='<circle class="bubble" cx="'+randInt(110,450)+'" cy="'+randInt(300,720)+'" r="'+randInt(6,18)+'" style="animation-delay:'+(Math.random()*0.5).toFixed(2)+'s"/>';}
+  const g=$('#bubbles');if(g)g.innerHTML=s;
+  setTimeout(()=>{
+    FIDS.forEach(f=>{state.nails[f]=null;state.rings[f]=null;});
+    state.bracelets=[];state.tattoos=[];state.glitter=false;state.nailShape='short';
+    washing=false;render();renderOpts();save();toast(nothing?'Squeaky clean already!':'All clean!');
+  },1000);
+}
+
+/* ---------- wiring ---------- */
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;state.tab=b.dataset.tab;renderTabs();renderOpts();sfx.tick();});
+$('#opts').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;act(b.dataset.k,b.dataset.v);});
+$('#undo').addEventListener('click',undo);
+$('#wash').addEventListener('click',wash);
+$('#sound').addEventListener('click',()=>{state.muted=!state.muted;save();renderOpts();if(!state.muted)sfx.tick();});
+
+function start(data){
+  if(data&&data.skin)Object.assign(state,data);else load();
+  renderTabs();render();renderOpts();updateButtons();
+}
+try{
+  if(window.claude&&window.claude.hot&&window.claude.hot.snapshot){window.claude.hot.snapshot(()=>pickKeys(SAVED.concat(['tab'])));}
+}catch(e){}
+if(window.claude&&window.claude.hot&&window.claude.hot.ready)window.claude.hot.ready(start);
+else start((window.claude&&window.claude.hot&&window.claude.hot.data)||{});
+})();
+</script>
+</body>
+</html>
