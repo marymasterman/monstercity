@@ -76,6 +76,9 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 }
 .brand{margin:0;font:400 30px/1 var(--font-hand);text-align:center;letter-spacing:.01em}
 
+.homeLink{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;text-decoration:none;color:var(--ink);background:var(--btn);border:2px solid var(--ink);border-radius:999px;padding:7px 14px 7px 10px;font:600 15px/1 var(--font-ui)}
+.homeLink svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.homeLink:hover{background:var(--accent);color:var(--accent-ink)}
 .tools{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 .tool{
   display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;min-height:72px;
@@ -197,6 +200,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 
   <aside class="tray" aria-label="Art supplies">
     <h1 class="brand">Art Easel</h1>
+    <a class="homeLink" href="../" aria-label="Back to Monster City"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>Monster City</a>
 
     <div class="tools" role="group" aria-label="Tools">
       <button class="tool" data-tool="pencil" aria-pressed="false">
