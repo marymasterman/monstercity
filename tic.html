@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1FB8B2">
+<style>[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Tic Tac Toe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;800&display=swap">
+<style>
+/* Layout: a sheet of paper (the board, drawn like her marker sketch) is the stage; the arcade tray with mode, level, score and New game sits beside it on wide screens and below it on phones. */
+:root{
+  --bg:#EEFBFA; --paper:#FFFFFF; --sheet:#FBFAF4; --rule:#E3E9F5; --ink:#1F2A3A; --muted:#6B7A8F; --line:#D4E6E5;
+  --accent:#1FB8B2; --accent-deep:#15847F; --accent-soft:#D6F5F3;
+  --marker:#1A1A1A; --x:#E0263C; --o:#2F6FE4; --win:#FFD93B;
+  --font-display:'Baloo 2','Trebuchet MS','Segoe UI',sans-serif;
+  --font-body:'Nunito','Segoe UI',Helvetica,Arial,sans-serif;
+  --radius:18px; --shadow:0 5px 0 rgba(31,42,58,.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15262B; --paper:#213640; --sheet:#F3EFE2; --rule:#DCE3EE; --ink:#EEF8F7; --muted:#9FB6B8; --line:#355159;
+    --accent:#3ED3CC; --accent-deep:#1FB8B2; --accent-soft:#1F4A4D;
+    --shadow:0 5px 0 rgba(0,0,0,.35); color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.3;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:12px 28px;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit}
+.app{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--font-display);font-weight:800;font-size:clamp(26px,4vw,36px);color:var(--accent-deep);margin:0;line-height:1.1}
+.back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--accent-deep);font-family:var(--font-display);font-weight:700;font-size:16px;
+  background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:7px 14px;box-shadow:var(--shadow)}
+.back:active{transform:translateY(3px);box-shadow:none}
+
+.board{display:grid;gap:16px;grid-template-columns:minmax(0,1fr);align-items:start}
+@media (min-width:820px){.board{grid-template-columns:minmax(0,1fr) 320px}}
+
+/* The sheet of paper */
+.stage{position:relative;display:grid;place-items:center;min-width:0}
+.sheet{position:relative;width:min(100%,520px);background:var(--sheet);
+  background-image:linear-gradient(transparent 27px,var(--rule) 27px,var(--rule) 28px,transparent 28px);background-size:100% 28px;
+  border-radius:6px;padding:26px;box-shadow:0 6px 0 rgba(31,42,58,.18),0 14px 30px rgba(31,42,58,.18);transform:rotate(-1deg)}
+.sheet::before{content:"";position:absolute;top:-12px;left:50%;width:84px;height:26px;transform:translateX(-50%) rotate(2deg);
+  background:rgba(255,224,110,.75);border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.sheet svg{display:block;width:100%;height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.cell{fill:transparent;cursor:pointer}
+.cell:hover{fill:rgba(31,184,178,.10)}
+.cell.taken{cursor:default}
+.cell.taken:hover{fill:transparent}
+.stroke{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.draw{stroke-dasharray:260;stroke-dashoffset:260;animation:draw .35s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.winline{stroke:var(--win);stroke-width:14;opacity:.85;stroke-dasharray:600;stroke-dashoffset:600;animation:draw .5s ease forwards}
+.toast{position:absolute;left:50%;top:-6px;transform:translateX(-50%);max-width:calc(100% - 24px);background:var(--paper);color:var(--ink);
+  border:3px solid var(--accent);border-radius:26px;padding:8px 18px;font-family:var(--font-display);font-weight:700;font-size:clamp(16px,2.4vw,20px);
+  text-align:center;box-shadow:var(--shadow);animation:drop .3s cubic-bezier(.3,1.5,.5,1) both;text-wrap:balance;pointer-events:none;z-index:2}
+@keyframes drop{from{transform:translate(-50%,-20px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+
+/* The arcade tray */
+.panel{display:flex;flex-direction:column;gap:12px;min-width:0}
+.lab{font-weight:800;font-size:12px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chip{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 6px 8px;background:var(--paper);border:3px solid var(--line);border-radius:14px;
+  cursor:pointer;font-family:var(--font-display);font-weight:700;font-size:16px;box-shadow:var(--shadow);min-width:0;transition:transform .1s}
+.chip svg{width:40px;height:32px;display:block}
+.chip:active{transform:translateY(3px);box-shadow:none}
+.chip.sel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-deep)}
+.chip:disabled{opacity:.45;cursor:default}
+.hint{font-family:var(--font-display);font-weight:700;font-size:20px;margin:0;text-wrap:balance;min-height:1.3em}
+.score{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.sc{background:var(--paper);border:3px solid var(--line);border-radius:14px;padding:8px 4px;text-align:center;box-shadow:var(--shadow)}
+.sc b{display:block;font-family:var(--font-display);font-size:28px;line-height:1}
+.sc span{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.sc.x b{color:var(--x)}.sc.o b{color:var(--o)}
+.big{height:58px;border-radius:16px;font-family:var(--font-display);font-weight:800;font-size:22px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--accent);color:#fff;box-shadow:0 5px 0 var(--accent-deep)}
+.big:active{transform:translateY(3px);box-shadow:none}
+.big svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.small{height:40px;border-radius:999px;border:3px solid var(--line);background:var(--paper);font-family:var(--font-display);font-weight:700;font-size:15px;cursor:pointer;box-shadow:var(--shadow)}
+.small:active{transform:translateY(3px);box-shadow:none}
+:focus-visible{outline:3px solid var(--accent-deep);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <h1 class="brand">Tic Tac Toe</h1>
+    <a class="back" href="../">&larr; Back to the city</a>
+  </header>
+
+  <main class="board">
+    <section class="stage" aria-label="The board">
+      <div class="toast" id="toast" role="status" hidden></div>
+      <div class="sheet">
+        <svg id="grid" viewBox="0 0 400 400" role="img" aria-label="Tic tac toe board drawn in marker">
+          <defs>
+            <filter id="wobble" x="-3%" y="-3%" width="106%" height="106%">
+              <feTurbulence type="turbulence" baseFrequency="0.025" numOctaves="2" seed="7" result="n"/>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="2.5"/>
+            </filter>
+          </defs>
+          <!-- her marker grid: two uprights, two across, a little crooked on purpose -->
+          <g class="stroke" stroke="var(--marker)" stroke-width="5" filter="url(#wobble)" opacity=".9">
+            <path d="M136 14 C134 90 136 200 130 386"/>
+            <path d="M268 18 C267 120 266 260 262 384"/>
+            <path d="M16 134 C110 133 240 136 388 132"/>
+            <path d="M14 268 C120 267 260 270 390 266"/>
+          </g>
+          <g id="cells"></g>
+          <g id="marks"></g>
+          <g id="win"></g>
+        </svg>
+      </div>
+    </section>
+
+    <aside class="panel" aria-label="Arcade tray">
+      <p class="hint" id="hint"></p>
+
+      <div class="lab">Players</div>
+      <div class="seg" id="modes">
+        <button type="button" class="chip" data-mode="1"><svg viewBox="0 0 40 32" aria-hidden="true"><circle cx="20" cy="11" r="7" fill="#F5CBA7"/><path d="M8 32c0-8 6-12 12-12s12 4 12 12" fill="#2F6FE4"/></svg>Me vs Monster</button>
+        <button type="button" class="chip" data-mode="2"><svg viewBox="0 0 40 32" aria-hidden="true"><circle cx="12" cy="11" r="6" fill="#F5CBA7"/><path d="M2 32c0-7 5-11 10-11s10 4 10 11" fill="#E0263C"/><circle cx="28" cy="11" r="6" fill="#C08454"/><path d="M18 32c0-7 5-11 10-11s10 4 10 11" fill="#2F6FE4"/></svg>Two players</button>
+      </div>
+
+      <div class="lab">Monster level</div>
+      <div class="seg" id="levels">
+        <button type="button" class="chip" data-level="easy"><svg viewBox="0 0 40 32" aria-hidden="true"><path d="M8 20C8 8 32 8 32 20c1 9-4 12-12 12S7 29 8 20z" fill="#8C6CFF"/><circle cx="20" cy="18" r="7" fill="#fff"/><circle cx="21" cy="19" r="3.5" fill="#2E2140"/><path d="M14 27q6 4 12 0" stroke="#2E2140" stroke-width="2" fill="none" stroke-linecap="round"/></svg>Sleepy</button>
+        <button type="button" class="chip" data-level="hard"><svg viewBox="0 0 40 32" aria-hidden="true"><path d="M8 20C8 8 32 8 32 20c1 9-4 12-12 12S7 29 8 20z" fill="#E2408E"/><path d="M10 6l4 8-7 1zM30 6l-4 8 7 1z" fill="#B92C70"/><circle cx="20" cy="18" r="7" fill="#fff"/><circle cx="21" cy="18" r="3.5" fill="#2E2140"/><path d="M14 26h12" stroke="#2E2140" stroke-width="2.5" stroke-linecap="round"/></svg>Super smart</button>
+      </div>
+
+      <div class="lab">Score</div>
+      <div class="score">
+        <div class="sc x"><b id="sx">0</b><span id="lx">You</span></div>
+        <div class="sc"><b id="st">0</b><span>Ties</span></div>
+        <div class="sc o"><b id="so">0</b><span id="lo">Monster</span></div>
+      </div>
+
+      <button class="big" id="new" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5l2 2"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-14 5l-2-2"/><path d="M4 20v-5h5"/></svg>New game</button>
+      <button class="small" id="reset" type="button">Reset score</button>
+    </aside>
+  </main>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s);
+const svg=$('#grid');
+const C=[[68,68],[200,68],[330,68],[68,200],[200,200],[330,200],[68,332],[200,332],[330,332]];
+const WINS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+const rand=(a,b)=>a+Math.random()*(b-a);
+
+const state={mode:1,level:'easy',board:Array(9).fill(null),turn:'X',over:false,busy:false,score:{X:0,O:0,T:0}};
+function save(){try{localStorage.setItem('tictactoe',JSON.stringify({mode:state.mode,level:state.level,score:state.score}));}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem('tictactoe')||'null');if(d){state.mode=d.mode||1;state.level=d.level||'easy';if(d.score)state.score=d.score;}}catch(e){}}
+
+/* ---------- sound ---------- */
+let actx=null;
+function tone(f,d,type,g,to){
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended')actx.resume();
+    const t=actx.currentTime,o=actx.createOscillator(),v=actx.createGain();
+    o.type=type||'sine';o.frequency.setValueAtTime(f,t);
+    if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);
+    v.gain.setValueAtTime(g||.12,t);v.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(v);v.connect(actx.destination);o.start(t);o.stop(t+d+.02);
+  }catch(e){}
+}
+const sfx={
+  tick:()=>tone(900,.05,'triangle',.05),
+  x:()=>tone(420,.12,'square',.05,300),
+  o:()=>tone(520,.14,'sine',.12,820),
+  win:()=>{[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.18,'triangle',.12),i*110));},
+  lose:()=>{[392,330,262].forEach((f,i)=>setTimeout(()=>tone(f,.2,'sine',.1),i*140));},
+  tie:()=>tone(440,.25,'triangle',.08,330)
+};
+
+/* ---------- drawing (marker style) ---------- */
+const w=()=>rand(-3,3);
+function el(name,attrs){const e=document.createElementNS('http://www.w3.org/2000/svg',name);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+function drawX(cx,cy){
+  const r=36,g=el('g',{class:'stroke',stroke:'var(--x)','stroke-width':'7'});
+  const a=el('path',{class:'draw',d:'M'+(cx-r+w())+' '+(cy-r+w())+' Q'+(cx+w())+' '+(cy+w())+' '+(cx+r+w())+' '+(cy+r+w())});
+  const b=el('path',{class:'draw',d:'M'+(cx+r+w())+' '+(cy-r+w())+' Q'+(cx+w())+' '+(cy+w())+' '+(cx-r+w())+' '+(cy+r+w())});
+  b.style.animationDelay='.18s';g.append(a,b);$('#marks').appendChild(g);
+}
+function drawO(cx,cy){
+  const rx=36+w(),ry=34+w(),rot=rand(-12,12);
+  const p=el('path',{class:'stroke draw',stroke:'var(--o)','stroke-width':'7',transform:'rotate('+rot.toFixed(1)+' '+cx+' '+cy+')',
+    d:'M'+(cx+rx)+' '+cy+' A'+rx+' '+ry+' 0 1 1 '+(cx+rx)+' '+(cy+0.1)});
+  $('#marks').appendChild(p);
+}
+function drawWin(combo){
+  const [a,,c]=combo,[x1,y1]=C[a],[x2,y2]=C[c],dx=Math.sign(x2-x1)*24,dy=Math.sign(y2-y1)*24;
+  $('#win').appendChild(el('line',{class:'stroke winline',x1:x1-dx,y1:y1-dy,x2:x2+dx,y2:y2+dy}));
+}
+function buildCells(){
+  const g=$('#cells');g.innerHTML='';
+  C.forEach(([x,y],i)=>g.appendChild(el('rect',{class:'cell',x:x-60,y:y-60,width:120,height:120,rx:10,'data-i':i,role:'button','aria-label':'Square '+(i+1)})));
+}
+
+/* ---------- game ---------- */
+function winner(b){
+  for(const c of WINS){if(b[c[0]]&&b[c[0]]===b[c[1]]&&b[c[0]]===b[c[2]])return{who:b[c[0]],combo:c};}
+  return b.every(Boolean)?{who:'T'}:null;
+}
+function names(){return state.mode===1?{X:'You',O:'Monster'}:{X:'Player 1 (X)',O:'Player 2 (O)'};}
+function hint(){
+  const n=names();
+  if(state.over)return;
+  $('#hint').textContent=state.mode===1?(state.turn==='X'?'Your turn! Tap a square.':'Monster is thinking…'):(n[state.turn]+", it's your turn!");
+}
+function place(i){
+  state.board[i]=state.turn;
+  const [x,y]=C[i];
+  if(state.turn==='X'){drawX(x,y);sfx.x();}else{drawO(x,y);sfx.o();}
+  svg.querySelector('[data-i="'+i+'"]').classList.add('taken');
+  const r=winner(state.board);
+  if(r){end(r);return;}
+  state.turn=state.turn==='X'?'O':'X';
+  hint();
+  if(state.mode===1&&state.turn==='O'){
+    state.busy=true;
+    setTimeout(()=>{state.busy=false;if(!state.over)place(monsterMove());},rand(450,900));
+  }
+}
+function end(r){
+  state.over=true;
+  svg.querySelectorAll('.cell').forEach(c=>c.classList.add('taken'));
+  const n=names();
+  if(r.who==='T'){state.score.T++;toast("It's a tie!");sfx.tie();}
+  else{
+    state.score[r.who]++;drawWin(r.combo);
+    if(state.mode===1){r.who==='X'?(toast('You win! 🎉'),sfx.win()):(toast('Monster wins! Try again?'),sfx.lose());}
+    else{toast(n[r.who]+' wins! 🎉');sfx.win();}
+  }
+  $('#hint').textContent='Tap New game to play again.';
+  renderScore();save();
+}
+function newGame(){
+  state.board=Array(9).fill(null);state.turn='X';state.over=false;state.busy=false;
+  $('#marks').innerHTML='';$('#win').innerHTML='';
+  svg.querySelectorAll('.cell').forEach(c=>c.classList.remove('taken'));
+  hint();
+}
+
+/* ---------- the monster's brain ---------- */
+function empties(b){return b.map((v,i)=>v?-1:i).filter(i=>i>=0);}
+function monsterMove(){
+  const b=state.board;
+  if(state.level==='easy'){
+    // Sleepy: usually random, sometimes takes a win it can see
+    for(const i of empties(b)){b[i]='O';const r=winner(b);b[i]=null;if(r&&r.who==='O'&&Math.random()<.5)return i;}
+    const e=empties(b);return e[Math.floor(Math.random()*e.length)];
+  }
+  // Super smart: minimax, never loses
+  let best=-Infinity,move=empties(b)[0];
+  for(const i of empties(b)){b[i]='O';const s=minimax(b,false,0);b[i]=null;if(s>best){best=s;move=i;}}
+  return move;
+}
+function minimax(b,maxing,depth){
+  const r=winner(b);
+  if(r){if(r.who==='O')return 10-depth;if(r.who==='X')return depth-10;return 0;}
+  let best=maxing?-Infinity:Infinity;
+  for(const i of empties(b)){
+    b[i]=maxing?'O':'X';const s=minimax(b,!maxing,depth+1);b[i]=null;
+    best=maxing?Math.max(best,s):Math.min(best,s);
+  }
+  return best;
+}
+
+/* ---------- UI ---------- */
+let toastTimer=null;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;t.style.animation='none';void t.offsetWidth;t.style.animation='';clearTimeout(toastTimer);toastTimer=setTimeout(()=>{t.hidden=true;},2200);}
+function renderScore(){$('#sx').textContent=state.score.X;$('#so').textContent=state.score.O;$('#st').textContent=state.score.T;const n=names();$('#lx').textContent=n.X;$('#lo').textContent=n.O;}
+function renderChips(){
+  document.querySelectorAll('[data-mode]').forEach(b=>{const on=+b.dataset.mode===state.mode;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on);});
+  document.querySelectorAll('[data-level]').forEach(b=>{const on=b.dataset.level===state.level;b.classList.toggle('sel',on);b.setAttribute('aria-pressed',on);b.disabled=state.mode===2;});
+}
+svg.addEventListener('pointerdown',e=>{
+  const c=e.target.closest('.cell');if(!c)return;
+  const i=+c.dataset.i;
+  if(state.over||state.busy||state.board[i])return;
+  if(state.mode===1&&state.turn==='O')return;
+  place(i);
+});
+$('#modes').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(!b)return;state.mode=+b.dataset.mode;sfx.tick();renderChips();renderScore();save();newGame();});
+$('#levels').addEventListener('click',e=>{const b=e.target.closest('[data-level]');if(!b||b.disabled)return;state.level=b.dataset.level;sfx.tick();renderChips();save();newGame();});
+$('#new').addEventListener('click',()=>{sfx.tick();newGame();});
+$('#reset').addEventListener('click',()=>{state.score={X:0,O:0,T:0};renderScore();save();toast('Score wiped clean!');sfx.tick();});
+
+load();buildCells();renderChips();renderScore();newGame();
+})();
+</script>
+</body>
+</html>
